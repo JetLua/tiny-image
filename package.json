@@ -19,7 +19,7 @@
     "@babel/runtime-corejs3": "^7.14.0",
     "antd": "^4.16.13",
     "autoprefixer": "^10.2.5",
-    "axios": "^0.21.4",
+    "axios": "^0.22.0",
     "babel-loader": "^8.2.2",
     "core-js": "^3.12.1",
     "css-loader": "^6.2.0",
