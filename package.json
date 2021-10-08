@@ -1,7 +1,7 @@
 {
-  "name": "oa",
+  "name": "zero",
   "version": "1.0.0",
-  "description": "花西子门户网站",
+  "description": "从未停止对美好事物的探索",
   "main": "index.js",
   "scripts": {
     "start": "webpack serve --env env=dev",
