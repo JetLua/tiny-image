@@ -45,7 +45,7 @@ function flat(routes: IRoute[]) {
   return queue
 }
 
-if (navigator.serviceWorker) {
+if (navigator.serviceWorker && PROD) {
   navigator.serviceWorker.register('/sw.js', {scope: '/'})
     .then(() => console.log('sw.js: done'))
     .catch(() => console.log('sw.js: failed'))

@@ -9,6 +9,7 @@
     "noImplicitAny": false,
     "removeComments": true,
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "skipLibCheck": true,
