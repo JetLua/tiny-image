@@ -18,6 +18,6 @@ export default React.memo(function() {
   })
 
   return <section className={style.root}>
-    <Button>ok123</Button>
+    <Button onClick={() => alert('ok')}>ok</Button>
   </section>
 })
