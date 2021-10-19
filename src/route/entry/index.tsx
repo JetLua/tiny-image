@@ -21,6 +21,8 @@ export default React.memo(function() {
       version: '2.0',
     }).then(AMap => {
       new AMap.Map(mapRef.current, {
+        zoom: 4,
+        center: [106.715923,34.27871],
         mapStyle: 'amap://styles/31183085dfa24d811d356d439de27eee'
       }).on('click', console.log)
     })
