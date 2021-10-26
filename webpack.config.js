@@ -29,7 +29,7 @@ module.exports = ({ env } = {}) => {
   const config = {
     cache: !prod,
 
-    entry: ['./src/app.tsx'],
+    entry: ['react-responsive-carousel/lib/styles/carousel.min.css', './src/app.tsx'],
 
     // target: prod ? 'browserslist' : 'web',
 
@@ -37,7 +37,8 @@ module.exports = ({ env } = {}) => {
       path: path.resolve('dist'),
       filename: '[name].[contenthash:8].js',
       chunkFilename: '[name].[contenthash:8].js',
-      publicPath: '/'
+      publicPath: '/',
+      hashFunction: 'xxhash64' //webpack@5 for nodejs@17
     },
 
     resolve: {
@@ -180,12 +181,13 @@ module.exports = ({ env } = {}) => {
       hot: true,
       host: '0.0.0.0',
       liveReload: false, // for hmr
+      historyApiFallback: true,
       static: {
         directory: '.'
       },
       client: {
         logging: 'error'
-      },
+      }
     }
   }
 
