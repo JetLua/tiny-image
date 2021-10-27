@@ -1,3 +1,4 @@
+import {ConfigProvider} from 'antd'
 import {hot} from 'react-hot-loader/root'
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 
@@ -21,9 +22,9 @@ function App() {
     ...context.data
   })
 
-  return <context.context.Provider value={{...state, dispatch}}><section className="app">
+  return <ConfigProvider locale={require('antd/lib/locale/zh_CN').default}><context.context.Provider value={{...state, dispatch}}><section className="app">
     <Router><Switch>{map(routes)}</Switch></Router>
-  </section></context.context.Provider>
+  </section></context.context.Provider></ConfigProvider>
 }
 
 function map(routes: IRoute[]) {
