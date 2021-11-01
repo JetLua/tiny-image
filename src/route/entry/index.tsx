@@ -1,35 +1,56 @@
-import Loader from '@amap/amap-jsapi-loader'
-
 import {Button} from 'antd'
-import {net, useMount, useReducer} from '~/util'
+import {UploadOutlined} from '@ant-design/icons'
 
+import {Convertor} from '~/module/ui'
+import {useMount, useReducer} from '~/util'
 import style from './style.less'
 
 export default React.memo(function() {
   const [state, dispatch] = useReducer({
-    count: 0,
-    info: {
-      name: 'Jet'
+    files: [] as File[]
+  })
+
+  const tap = (e: React.MouseEvent<HTMLElement>) => {
+    const target = e.currentTarget
+
+    switch (target.dataset.name) {
+      case 'btn:choose': {
+        const input = document.createElement('input')
+        input.multiple = true
+        input.type = 'file'
+        // input.webkitdirectory = true
+        input.accept = 'image/*'
+        input.click()
+        input.onchange = async () => {
+          const files = []
+          for (let i = 0; i < input.files.length; i++) {
+            const file = input.files.item(i)
+            if (!file.type.startsWith('image')) continue
+            // const url = URL.createObjectURL(file)
+            files.push(file)
+          }
+          dispatch({files})
+        }
+        break
+      }
     }
-  })
+  }
 
-  const mapRef = React.useRef<HTMLDivElement>()
-
-  useMount(async () => {
-    Loader.load({
-      key: 'c9251e4e916a22afa112b473694a7c4f',
-      version: '2.0',
-    }).then(AMap => {
-      new AMap.Map(mapRef.current, {
-        zoom: 4,
-        center: [106.715923,34.27871],
-        mapStyle: 'amap://styles/31183085dfa24d811d356d439de27eee'
-      }).on('click', console.log)
-    })
-  })
-
-
-  return <section className={style.root}>
-    <div ref={mapRef} className={style.map}></div>
+  return <section className={style.root} onClick={tap}>
+    <section className={style.action}>
+      <Button type="primary"
+        icon={<UploadOutlined/>}
+        onClick={tap}
+        data-name="btn:choose"
+        className={style.btn}
+      >选择图片</Button>
+    </section>
+    <section className={style.gallery}>
+      {
+        state.files.map((file, i) => {
+          return <Convertor key={i} file={file}/>
+        })
+      }
+    </section>
   </section>
 })

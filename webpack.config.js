@@ -93,7 +93,8 @@ module.exports = ({ env } = {}) => {
         },
         {
           test: /\.(jpe?g|png|svg|gif)$/,
-          use: ['url-loader']
+          type: 'asset/resource',
+          dependency: {not: ['url']},
         }
       ]
     },
@@ -182,6 +183,10 @@ module.exports = ({ env } = {}) => {
       host: '0.0.0.0',
       liveReload: false, // for hmr
       historyApiFallback: true,
+      headers: {
+        'cross-origin-opener-policy': 'same-origin',
+        'cross-origin-embedder-policy': 'require-corp',
+      },
       static: {
         directory: '.'
       },

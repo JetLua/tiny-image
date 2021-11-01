@@ -19,6 +19,8 @@
     "@babel/preset-react": "^7.13.13",
     "@babel/preset-typescript": "^7.13.0",
     "@babel/runtime-corejs3": "^7.14.0",
+    "@ffmpeg/core": "^0.10.0",
+    "@ffmpeg/ffmpeg": "^0.10.1",
     "antd": "^4.16.13",
     "autoprefixer": "^10.2.5",
     "axios": "^0.24.0",
