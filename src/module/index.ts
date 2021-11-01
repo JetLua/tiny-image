@@ -1,1 +1,2 @@
-export {default as AMap, AMapRef} from './amap'
+export {default as AMap} from './amap'
+export type {AMapRef} from './amap'
