@@ -1,5 +1,5 @@
 import {Button} from 'antd'
-import {UploadOutlined} from '@ant-design/icons'
+import {UploadOutlined, DownloadOutlined} from '@ant-design/icons'
 
 import {Convertor} from '~/module/ui'
 import {useMount, useReducer} from '~/util'
@@ -7,7 +7,14 @@ import style from './style.less'
 
 export default React.memo(function() {
   const [state, dispatch] = useReducer({
-    files: [] as File[]
+    files: [] as File[],
+    height: 0
+  })
+
+  const domRef = React.useRef<HTMLElement>()
+
+  useMount(() => {
+    dispatch({height: (domRef.current.offsetWidth - 3 * 2) / 4})
   })
 
   const tap = (e: React.MouseEvent<HTMLElement>) => {
@@ -36,21 +43,35 @@ export default React.memo(function() {
     }
   }
 
-  return <section className={style.root} onClick={tap}>
-    <section className={style.action}>
-      <Button type="primary"
-        icon={<UploadOutlined/>}
-        onClick={tap}
-        data-name="btn:choose"
-        className={style.btn}
-      >选择图片</Button>
-    </section>
-    <section className={style.gallery}>
-      {
-        state.files.map((file, i) => {
-          return <Convertor key={i} file={file}/>
-        })
-      }
+  return <section className={style.root}>
+    <section className={style.main}>
+      <section className={style.action}>
+        <Button type="primary"
+          icon={<UploadOutlined/>}
+          onClick={tap}
+          data-name="btn:choose"
+          className={style.btn}
+        >选择图片</Button>
+        <Button
+          type="default"
+          icon={<DownloadOutlined/>}
+          style={{marginLeft: 12}}
+        >下载全部</Button>
+      </section>
+      <section className={style.gallery}
+        ref={domRef}
+      >
+        {
+          state.files.map((file, i) => {
+            return <Convertor
+              key={i}
+              file={file}
+              index={i}
+              style={{height: state.height}}
+            />
+          })
+        }
+      </section>
     </section>
   </section>
 })
