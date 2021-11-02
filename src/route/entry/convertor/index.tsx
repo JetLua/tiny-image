@@ -78,6 +78,6 @@ interface Props extends React.PropsWithChildren<{}> {
   file: File
   index: number
   style?: React.CSSProperties
-  success?: () => void
+  success?: (data: Uint8Array) => void
   close?: () => void
 }

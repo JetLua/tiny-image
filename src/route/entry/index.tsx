@@ -1,4 +1,5 @@
 import {Button} from 'antd'
+import JSZip from 'jszip'
 import {UploadOutlined, DownloadOutlined} from '@ant-design/icons'
 
 import Convertor from './convertor'
@@ -7,8 +8,9 @@ import style from './style.less'
 
 export default React.memo(function() {
   const [state, dispatch] = useReducer({
-    files: [] as File[],
-    height: 0
+    files: [] as {file: File, compressed?: Uint8Array}[],
+    height: 0,
+
   })
 
   const domRef = React.useRef<HTMLElement>()
@@ -25,22 +27,32 @@ export default React.memo(function() {
         const input = document.createElement('input')
         input.multiple = true
         input.type = 'file'
-        // input.webkitdirectory = true
         input.accept = 'image/*'
         input.click()
         input.onchange = async () => {
-          const files = []
-          for (let i = 0; i < input.files.length; i++) {
+          const files = state.files
+          loop: for (let i = 0; i < input.files.length; i++) {
             const file = input.files.item(i)
+            for (const f of files) if (same(f.file, file)) continue loop
             if (!file.type.startsWith('image')) continue
-            // const url = URL.createObjectURL(file)
-            files.push(file)
+            files.push({file})
           }
           dispatch({files})
         }
         break
       }
+
+      case 'btn:download': {
+        const zip = new JSZip()
+
+        break
+      }
     }
+  }
+
+  const same = (a: File, b: File) => {
+    if (a.lastModified === b.lastModified &&
+      a.type === b.type) return true
   }
 
   return <section className={style.root}>
@@ -54,15 +66,16 @@ export default React.memo(function() {
         >选择图片</Button>
         <Button
           type="default"
+          data-name="btn:download"
           icon={<DownloadOutlined/>}
           style={{marginLeft: 12}}
-        >下载全部</Button>
+        >下载全部(.zip)</Button>
       </section>
       <section className={style.gallery}
         ref={domRef}
       >
         {
-          state.files.map((file, i) => {
+          state.files.map(({file}, i) => {
             return <Convertor
               key={i}
               file={file}
@@ -70,8 +83,12 @@ export default React.memo(function() {
               style={{height: state.height}}
               close={() => {
                 dispatch({
-                  files: state.files.filter(item => item !== file)
+                  files: state.files.filter(item => item.file !== file)
                 })
+              }}
+              success={(data: Uint8Array) => {
+                const files = state.files
+                // todo
               }}
             />
           })
