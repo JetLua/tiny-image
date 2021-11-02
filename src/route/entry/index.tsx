@@ -1,7 +1,7 @@
 import {Button} from 'antd'
 import {UploadOutlined, DownloadOutlined} from '@ant-design/icons'
 
-import {Convertor} from '~/module/ui'
+import Convertor from './convertor'
 import {useMount, useReducer} from '~/util'
 import style from './style.less'
 
@@ -68,6 +68,11 @@ export default React.memo(function() {
               file={file}
               index={i}
               style={{height: state.height}}
+              close={() => {
+                dispatch({
+                  files: state.files.filter(item => item !== file)
+                })
+              }}
             />
           })
         }
