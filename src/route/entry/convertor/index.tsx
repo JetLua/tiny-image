@@ -55,8 +55,6 @@ export default React.memo(function(props: Props) {
     }
   }
 
-
-
   return <section className={style.root}
     style={{...props.style, backgroundImage: `url(${state.raw})`}}
   >
