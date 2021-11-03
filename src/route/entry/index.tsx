@@ -1,6 +1,6 @@
 import {Button} from 'antd'
 import JSZip from 'jszip'
-import {UploadOutlined, DownloadOutlined} from '@ant-design/icons'
+import {ExperimentOutlined, DownloadOutlined} from '@ant-design/icons'
 
 import Convertor from './convertor'
 import {save, useMount, useReducer} from '~/util'
@@ -11,12 +11,6 @@ export default React.memo(function() {
     files: [] as {file: File, compressed?: Uint8Array}[],
     height: 0,
 
-  })
-
-  const domRef = React.useRef<HTMLElement>()
-
-  useMount(() => {
-    dispatch({height: (domRef.current.offsetWidth - 3 * 2) / 4})
   })
 
   const tap = (e: React.MouseEvent<HTMLElement>) => {
@@ -65,33 +59,57 @@ export default React.memo(function() {
 
   const {files} = state
 
+  const onDrop = (e: React.DragEvent<HTMLElement>) => {
+    e.preventDefault()
+
+    const {files} = e.dataTransfer
+    const list: {file: File}[] = []
+
+    loop: for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+      const type = file.type.replace('image/', '')
+      for (const f of state.files) if (same(f.file, file)) continue loop
+      if (type === 'png' || type === 'jpg' || type === 'jpeg') {
+        list.push({file})
+      }
+    }
+
+    dispatch({files: list})
+  }
+
+  const onDragOver = (e: React.DragEvent<HTMLElement>) => {
+    e.preventDefault()
+  }
+
   return <section className={style.root}>
     <section className={style.main}>
       <section className={style.action}>
-        <Button type="primary"
-          icon={<UploadOutlined/>}
+        <div className={style.acceptor}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
           onClick={tap}
           data-name="btn:choose"
-          className={style.btn}
-        >选择图片</Button>
+        >
+          <ExperimentOutlined
+            style={{fontSize: 32, color: '#009688'}}
+          />
+          <p>点击选择或者拖拽上传图片</p>
+        </div>
         {files.length > 0 && files.filter(item => item.compressed).length === files.length && <Button
-          type="default"
+          type="primary"
           onClick={tap}
           data-name="btn:download"
           icon={<DownloadOutlined/>}
-          style={{marginLeft: 12}}
+          style={{marginTop: 12}}
         >下载全部(.zip)</Button>}
       </section>
-      <section className={style.gallery}
-        ref={domRef}
-      >
+      <section className={style.gallery}>
         {
           files.map((item, i) => {
             return <Convertor
               key={i}
               file={item.file}
               index={i}
-              style={{height: state.height}}
               close={() => {
                 dispatch({
                   files: files.filter(({file}) => file !== item.file)

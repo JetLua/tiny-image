@@ -1,6 +1,7 @@
+import {Button} from 'antd'
 import {createFFmpeg, fetchFile} from '@ffmpeg/ffmpeg'
 import {DownloadOutlined, LoadingOutlined, CloseCircleFilled} from '@ant-design/icons'
-import {Button} from 'antd'
+
 import {save, useMount, useReducer} from '~/util'
 
 import style from './style.less'
@@ -13,7 +14,8 @@ export default React.memo(function(props: Props) {
     raw: '',
     loading: false,
     done: false,
-    url: ''
+    url: '',
+    size: 0
   })
 
   useMount(() => {
@@ -35,8 +37,15 @@ export default React.memo(function(props: Props) {
     } else await ff.run('-i',  get, '-y', out)
 
     const data = ff.FS('readFile', out)
+    const blob = new Blob([data.buffer])
+
     props.success(data)
-    dispatch({loading: false, url: URL.createObjectURL(new Blob([data.buffer]))})
+
+    dispatch({
+      loading: false,
+      url: URL.createObjectURL(blob),
+      size: blob.size
+    })
 
     return () => URL.revokeObjectURL(state.url)
   })
@@ -52,22 +61,15 @@ export default React.memo(function(props: Props) {
     }
   }
 
-  return <section className={style.root}
-    style={{...props.style, backgroundImage: `url(${state.raw})`}}
-  >
-    {state.loading && <div className={style.loading}>
-      <LoadingOutlined style={{color: '#fff', fontSize: 32}}/>
-    </div>}
+  return <section className={style.root}>
+    <i style={{textAlign: 'left', paddingLeft: 12}}>{file.name}</i>
+    <Format v={file.size}/>
+    {state.url && <Format v={state.size}/>}
+    {!state.url && <i><LoadingOutlined/></i>}
     {state.url && <div className={style.download}>
-      <Button icon={<DownloadOutlined/>}
-        type="link"
-        data-name="btn:download"
-        onClick={tap}
-      >下载</Button>
+      <i data-name="btn:download" onClick={tap}>下载</i>
+      <i onClick={props.close} style={{marginLeft: 8}}>删除</i>
     </div>}
-    {state.url && <CloseCircleFilled className={style.close}
-      onClick={props.close}
-    />}
   </section>
 })
 
@@ -77,4 +79,11 @@ interface Props extends React.PropsWithChildren<{}> {
   style?: React.CSSProperties
   success?: (data: Uint8Array) => void
   close?: () => void
+}
+
+function Format({v}: {v: number}) {
+  let unit = ''
+  if (v >= 1024) v /= 1024, unit = 'K'
+  if (v >= 1024) v /= 1024, unit = 'M'
+  return <i style={{textAlign: 'left'}}>{v.toFixed(1)} {unit}</i>
 }
