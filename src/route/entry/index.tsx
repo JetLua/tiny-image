@@ -3,7 +3,7 @@ import JSZip from 'jszip'
 import {UploadOutlined, DownloadOutlined} from '@ant-design/icons'
 
 import Convertor from './convertor'
-import {useMount, useReducer} from '~/util'
+import {save, useMount, useReducer} from '~/util'
 import style from './style.less'
 
 export default React.memo(function() {
@@ -45,6 +45,14 @@ export default React.memo(function() {
       case 'btn:download': {
         const zip = new JSZip()
 
+        for (const item of state.files) {
+          if (!item.compressed) continue
+          zip.file(item.file.name, item.compressed)
+        }
+
+        zip.generateAsync({type: 'blob'}).then(data => {
+          save('compressed.zip', data)
+        })
         break
       }
     }
@@ -55,6 +63,8 @@ export default React.memo(function() {
       a.type === b.type) return true
   }
 
+  const {files} = state
+
   return <section className={style.root}>
     <section className={style.main}>
       <section className={style.action}>
@@ -64,31 +74,32 @@ export default React.memo(function() {
           data-name="btn:choose"
           className={style.btn}
         >选择图片</Button>
-        <Button
+        {files.length > 0 && files.filter(item => item.compressed).length === files.length && <Button
           type="default"
+          onClick={tap}
           data-name="btn:download"
           icon={<DownloadOutlined/>}
           style={{marginLeft: 12}}
-        >下载全部(.zip)</Button>
+        >下载全部(.zip)</Button>}
       </section>
       <section className={style.gallery}
         ref={domRef}
       >
         {
-          state.files.map(({file}, i) => {
+          files.map((item, i) => {
             return <Convertor
               key={i}
-              file={file}
+              file={item.file}
               index={i}
               style={{height: state.height}}
               close={() => {
                 dispatch({
-                  files: state.files.filter(item => item.file !== file)
+                  files: files.filter(({file}) => file !== item.file)
                 })
               }}
               success={(data: Uint8Array) => {
-                const files = state.files
-                // todo
+                item.compressed = data
+                dispatch({files: files})
               }}
             />
           })

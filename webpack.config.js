@@ -180,6 +180,7 @@ module.exports = ({ env } = {}) => {
 
     config.devServer = {
       hot: true,
+      https: true,
       host: '0.0.0.0',
       liveReload: false, // for hmr
       historyApiFallback: true,

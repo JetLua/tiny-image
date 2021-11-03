@@ -2,7 +2,7 @@ module.exports = {
   presets: [
     ['@babel/react'],
     ['@babel/typescript', {isTSX: true, allExtensions: true, onlyRemoveTypeImports: true}],
-    ['@babel/env', {useBuiltIns: 'usage', corejs: 3.17}],
+    ['@babel/env', {useBuiltIns: 'usage', corejs: 3.19}],
   ],
   plugins: [
     ['import', {

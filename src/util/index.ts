@@ -13,6 +13,14 @@ export function useMount(cb: Function) {
   }, [])
 }
 
+export function save(name: string, file: Blob | string) {
+  const a = document.createElement('a')
+  a.href = file instanceof Blob ? URL.createObjectURL(file) : file
+  a.download = name
+  a.target = '_blank'
+  a.click()
+  setTimeout(() => URL.revokeObjectURL(a.href))
+}
 
 export function useReducer<T>(state: T, opts?: Options) {
   return React.useReducer(

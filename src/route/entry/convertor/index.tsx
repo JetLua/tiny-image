@@ -1,7 +1,7 @@
 import {createFFmpeg, fetchFile} from '@ffmpeg/ffmpeg'
 import {DownloadOutlined, LoadingOutlined, CloseCircleFilled} from '@ant-design/icons'
 import {Button} from 'antd'
-import {useMount, useReducer} from '~/util'
+import {save, useMount, useReducer} from '~/util'
 
 import style from './style.less'
 
@@ -35,7 +35,7 @@ export default React.memo(function(props: Props) {
     } else await ff.run('-i',  get, '-y', out)
 
     const data = ff.FS('readFile', out)
-
+    props.success(data)
     dispatch({loading: false, url: URL.createObjectURL(new Blob([data.buffer]))})
 
     return () => URL.revokeObjectURL(state.url)
@@ -46,10 +46,7 @@ export default React.memo(function(props: Props) {
 
     switch (target.dataset.name) {
       case 'btn:download': {
-        const a = document.createElement('a')
-        a.href = state.url
-        a.download = file.name
-        a.click()
+        save(file.name, state.url)
         break
       }
     }
