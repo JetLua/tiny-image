@@ -63,12 +63,12 @@ export default React.memo(function() {
     e.preventDefault()
 
     const {files} = e.dataTransfer
-    const list: {file: File}[] = []
+    const list = state.files
 
     loop: for (let i = 0; i < files.length; i++) {
       const file = files[i]
       const type = file.type.replace('image/', '')
-      for (const f of state.files) if (same(f.file, file)) continue loop
+      for (const f of list) if (same(f.file, file)) continue loop
       if (type === 'png' || type === 'jpg' || type === 'jpeg') {
         list.push({file})
       }
